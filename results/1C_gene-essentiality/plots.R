@@ -74,8 +74,8 @@ gg_essentiality <- (
         pch = 23,
         size = 4
     )
-    + labs(x = "Cell Line", y = "Essentiality Score")
-    + guides(fill = guide_legend(title = "Knockdown Method"))
+    + labs(x = "Cell Line", y = "Gene Essentiality Score")
+    + guides(fill = guide_legend(title = "Method"))
     + lims(y = c(-5, 5))
     + theme(
         # font sizes for axes and legend
@@ -87,7 +87,6 @@ gg_essentiality <- (
         axis.ticks = element_blank(),
         panel.grid.major.x = element_blank(),
         panel.grid.major.y = element_line(colour = "#9e9e9e"),
-        # panel.grid.minor = element_line(colour = "#bdbdbd"),
         panel.background = element_rect(fill = "transparent")
     )
 )
