@@ -5,9 +5,9 @@ Mutations come from 200 intermediate-risk primary prostate cancer samples.
 
 Regions of interest are DHS regions from LNCaP cells, intersected with catalogue of H3K27ac peaks from 20 patients (from the above cohort).
 
-This folder uses data that was used to generate the results in `/results/1A_smurf/`, but there were some questions about how that data was generated.
+This folder uses data that was used to generate the results in `/data/processed/Mutated_Regions.txt`, but there were some questions about how that data was generated.
 So this folder is to explicitly regenerate the data and those figures.
-These results should be used instead of the figures from `/results/1A_smurf/`.
+These results should be used instead of the data from `/data/processed/Mutated_Regions.txt`.
 
 ## Steps
 
