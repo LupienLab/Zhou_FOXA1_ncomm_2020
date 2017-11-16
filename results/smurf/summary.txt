@@ -1,0 +1,13 @@
+myRegions:	125553
+Regions annotated to Distal REs:	108497
+Regions annotated to Promoters:	17056
+Average number of mutations per sample:	1387.91
+Average percentage of mutations in regions:	1.8614686259179
+Mutated Regions:	5145
+Mutated Regions annotated to Distal REs:	4422
+Mutated Regions annotated to Promoters:	723
+Mutated Regions (Freq>=3):	18
+Mutated Regions (Freq>=3,qval<=0.05):	18
+Mutated Regions (Freq>=3,qval<=0.05) annotated to Distal REs:	14
+Mutated Regions (Freq>=3,qval<=0.05) annotated to Promoters:	4
+
