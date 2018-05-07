@@ -1,8 +1,8 @@
 # ==============================================================================
 # Environment
 # ==============================================================================
-library("ggplot2")
-library("data.table")
+suppressMessages(library("ggplot2"))
+suppressMessages(library("data.table"))
 
 # ==============================================================================
 # Data
@@ -58,6 +58,32 @@ achilles_all <- data.table(
     )
 )
 
+# melted data.table for essentiality across all cell lines
+crispr_table <- melt(
+    achilles_crispr,
+    id.vars = "Description",
+    measure.vars = 3:35,
+    variable.name = "Cell",
+    value.name = "Score"
+)
+# find index of underscore in string
+crispr_table[, Underscore := as.vector(regexpr("_", Cell))]
+# classify cell line based on tissue type
+crispr_table[, Type := substring(Cell, Underscore + 1, 100)]
+
+# melted data.table for essentiality across all cell lines
+rnai_table <- melt(
+    achilles_rnai,
+    id.vars = "Description",
+    measure.vars = 3:218,
+    variable.name = "Cell",
+    value.name = "Score"
+)
+# find index of underscore in string
+rnai_table[, Underscore := as.vector(regexpr("_", Cell))]
+# classify cell line based on tissue type
+rnai_table[, Type := substring(Cell, Underscore + 1, 100)]
+
 # ==============================================================================
 # Plots
 # ==============================================================================
@@ -94,4 +120,60 @@ gg_essentiality <- (
 ggsave(
     gg_essentiality,
     file = "essentiality.png"
+)
+
+# CRISPR knockout plots for FOXA1 in all cell lines
+gg_foxa1_crispr <- (
+    ggplot(data = crispr_table)
+    + geom_boxplot(
+        aes(x = Cell, y = Score, fill = Type)
+    )
+    + geom_point(
+        data = crispr_table[Description == "FOXA1"],
+        mapping = aes(x = Cell, y = Score),
+        fill = "red",
+        pch = 23,
+        size = 4
+    )
+    + labs(x = "Cell Line", y = "Essentiality Score")
+    + guides(fill = FALSE)
+    + facet_grid(. ~ Type, scales = "free_x")
+    + theme(
+        # font sizes for axes and legend
+        axis.text = element_text(size = 6, angle = 90, vjust = 1),
+    )
+)
+ggsave(
+    "crispr-essentiality-all.png",
+    height = 18,
+    width = 40,
+    units = "cm"
+)
+
+# RNAi plots for FOXA1 in all cell lines
+gg_foxa1_rnai <- (
+    ggplot(data = rnai_table)
+    + geom_boxplot(
+        aes(x = Cell, y = Score, fill = Type)
+    )
+    + geom_point(
+        data = rnai_table[Description == "FOXA1"],
+        mapping = aes(x = Cell, y = Score),
+        fill = "red",
+        pch = 23,
+        size = 4
+    )
+    + labs(x = "Cell Line", y = "Essentiality Score")
+    + guides(fill = FALSE)
+    + facet_grid(. ~ Type, scales = "free_x")
+    + theme(
+        # font sizes for axes and legend
+        axis.text = element_text(size = 6, angle = 90, vjust = 1),
+    )
+)
+ggsave(
+    "rnai-essentiality-all.png",
+    height = 18,
+    width = 40,
+    units = "cm"
 )
