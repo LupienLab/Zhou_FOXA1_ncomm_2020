@@ -42,6 +42,19 @@ It's possible they modelled each set as _N_(0, σ^2), instead of _N_(0, 1).
 But even so, the NCI-H660 and VCaP distributions don't appear to be centred on 0.
 However, I'm not sure how meaningful a question this is, and whether it's worth pursuing.
 
+### Permutation Test
+
+FOXA1 is present in all cell lines, and its essentiality varies depending on the
+line and the tissue.
+
+![CRISPR essentiality scores](crispr-essentiality-all.png)
+![RNAi essentiality scores](rnai-essentiality-all.png)
+
+To explicitly show that FOXA1 is particularly important in prostate cancer cells
+over other cell lines, we perform a permutation test.
+
+> INSERT DETAILS HERE
+
 ## Conclusions
 
 FOXA1 is observable as an essential gene in a variety of prostate cancer cell lines.

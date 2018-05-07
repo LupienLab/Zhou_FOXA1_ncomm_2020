@@ -137,6 +137,7 @@ gg_foxa1_crispr <- (
     )
     + labs(x = "Cell Line", y = "Essentiality Score")
     + guides(fill = FALSE)
+    + ggtitle("CRISPR Essentiality Scores")
     + facet_grid(. ~ Type, scales = "free_x")
     + theme(
         # font sizes for axes and legend
@@ -165,6 +166,7 @@ gg_foxa1_rnai <- (
     )
     + labs(x = "Cell Line", y = "Essentiality Score")
     + guides(fill = FALSE)
+    + ggtitle("RNAi Essentiality Scores")
     + facet_grid(. ~ Type, scales = "free_x")
     + theme(
         # font sizes for axes and legend
