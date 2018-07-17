@@ -1,0 +1,19 @@
+rule download:
+    input:
+        "gdc_manifest_20180717_162017.txt"
+    shell:
+        "./gdc-client -m {input}"
+
+rule extract:
+    input:
+        "gdc_download_20180717_171231.tar"
+    shell:
+        "tar -xvf {input}"
+
+rule reorganize:
+    shell:
+        "mv */*.FPKM.txt.gz ."
+
+rule cleanup:
+    shell:
+        "rm */annotations.txt && rmdir */ && rm ./gdc_download_20180717_171231.tar"
