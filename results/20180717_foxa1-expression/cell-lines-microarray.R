@@ -9,7 +9,7 @@ suppressMessages(library("ggplot2"))
 # ==============================================================================
 # read CCLE data
 ccle <- fread(
-    "../../data/external/CCLE_Expression_2012-09-29.res",
+    "../../data/external/CCLE/CCLE_Expression_2012-09-29.res",
     header = TRUE,
     sep = "\t",
     blank.lines.skip = TRUE,  # second line of the res file is blank
@@ -45,10 +45,17 @@ colnames(pca_exprs) <- c("Description", "Accession", "Cell", "Expression")
 gg <- (
     ggplot(data = pca_exprs, aes(x = Cell, y = Expression, fill = Cell))
     + geom_boxplot()
+    + geom_point(
+        data = pca_exprs[Description == "FOXA1"],
+        mapping = aes(x = Cell, y = Expression),
+        fill = "red",
+        pch = 23,
+        size = 4
+    )
     + labs(x = "Cell Line", y = "Gene Expression (RMA-normalized)")
 )
 ggsave(
-    "cell-lines.png",
+    "cell-lines-microarray.png",
     height = 25,
     width = 40,
     units = "cm",
