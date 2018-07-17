@@ -1,0 +1,8 @@
+rule plot_cell_line_expression:
+    input:
+        script = "cell-lines.R",
+        data = "../../data/external/CCLE_Expression_2012-09-29.res"
+    output:
+        "cell-lines.png"
+    shell:
+        "Rscript {input.script}"
