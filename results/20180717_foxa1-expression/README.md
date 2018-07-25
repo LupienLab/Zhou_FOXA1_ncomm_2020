@@ -27,6 +27,8 @@ I'm using mRNA microarray datasets from the CCLE for various prostate cancer cel
 This has been downloaded from [CCLE legacy mRNA expression data](https://portals.broadinstitute.org/ccle/data)
 (`CCLE_Expression_2012-09-29.res`) and is stored in `/data/external/CCLE/`.
 
+As described, they were produced on the Affymetrix U133 Plus 2 human genome arrays.
+
 #### RNA-seq
 
 I'm also using RNA-seq read counts from the new [DEPMAP project](https://depmap.org/portal/dataset/omics).
@@ -48,5 +50,15 @@ I've downloaded these from the GDC Data Portal with the following filters:
 The manifest and the data for this dataset is `/data/external/TCGA-PRAD/`.
 
 ## Results
+
+### FOXA1 is highly expressed in prostate cancer
+
+Using CCLE mRNA microarray data, we see the following distribution of mRNAs for various cell lines.
+
+![FOXA1 mRNA abundance in prostate cancer cell lines](cell-lines-microarray.png)
+
+The red highlighted circles correspond to FOXA1.
+As shown, FOXA1 resides above the 75th percentile of genes expressed as mRNA across
+various prostate cancer cell lines.
 
 ## Conclusions
