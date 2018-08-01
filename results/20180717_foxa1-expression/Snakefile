@@ -2,6 +2,7 @@ rule plot_cell_line_microarray_expression:
     input:
         script = "cell-lines-microarray.R",
         data = "../../data/external/CCLE/CCLE_Expression_2012-09-29.res"
+        affyids = "Affymetrix_U133_Plus_2-probe-IDs.tsv"
     output:
         "cell-lines-microarray.png"
     shell:
@@ -13,5 +14,13 @@ rule plot_cell_line_seq_expression:
         data = "../../data/external/CCLE/CCLE_DepMap_18Q2_RNAseq_RPKM_20180502.gct"
     output:
         "cell-lines-seq.png"
+    shell:
+        "Rscript {input.script}"
+
+rule affyids:
+    input:
+        script = "get-affyids.R"
+    output:
+        "Affymetrix_U133_Plus_2-probe-IDs.tsv"
     shell:
         "Rscript {input.script}"
