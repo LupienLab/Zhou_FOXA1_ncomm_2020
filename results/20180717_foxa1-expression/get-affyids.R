@@ -1,4 +1,5 @@
 suppressMessages(library("biomaRt"))
+suppressMessages(library("data.table"))
 # get Affymetrix Probe IDs (RUN WHEN CONNECTED TO INTERNET)
 
 ensembl <- useMart("ensembl")
@@ -12,8 +13,6 @@ affyids <- getBM(
         'end_position',
         'band'
     ),
-    filters = 'affy_hg_u133_plus_2', 
-    values = ccle$Accession, 
     mart = ensembl
 )
 affyids <- as.data.table(affyids)
