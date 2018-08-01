@@ -73,4 +73,6 @@ mRNAs for various cell lines.
 
 Again, the red highlighted circles correspond to FOXA1.
 
+### FOXA1 is highly expressed in prostate cancer
+
 ## Conclusions
