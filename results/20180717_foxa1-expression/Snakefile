@@ -1,12 +1,20 @@
+rule all:
+    input:
+        "cell-lines-microarray.png",
+        "cell-lines-seq.png",
+        "tcga.png"
+
+
 rule plot_cell_line_microarray_expression:
     input:
         script = "cell-lines-microarray.R",
-        data = "../../data/external/CCLE/CCLE_Expression_2012-09-29.res"
+        data = "../../data/external/CCLE/CCLE_Expression_2012-09-29.res",
         affyids = "Affymetrix_U133_Plus_2-probe-IDs.tsv"
     output:
         "cell-lines-microarray.png"
     shell:
         "Rscript {input.script}"
+
 
 rule plot_cell_line_seq_expression:
     input:
@@ -17,10 +25,19 @@ rule plot_cell_line_seq_expression:
     shell:
         "Rscript {input.script}"
 
+
 rule affyids:
     input:
         script = "get-affyids.R"
     output:
         "Affymetrix_U133_Plus_2-probe-IDs.tsv"
+    shell:
+        "Rscript {input.script}"
+
+rule ensembl_ids:
+    input:
+        script = "get-ensembl-genes.R"
+    output:
+        "ensembl-gene-IDs.tsv"
     shell:
         "Rscript {input.script}"
