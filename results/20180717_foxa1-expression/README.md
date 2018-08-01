@@ -51,14 +51,26 @@ The manifest and the data for this dataset is `/data/external/TCGA-PRAD/`.
 
 ## Results
 
-### FOXA1 is highly expressed in prostate cancer
+### FOXA1 is highly expressed in prostate cancer cell lines
 
-Using CCLE mRNA microarray data, we see the following distribution of mRNAs for various cell lines.
+#### Microarray evidence
+
+Using CCLE mRNA microarray data, we see the following distribution of mRNA for
+various cell lines.
 
 ![FOXA1 mRNA abundance in prostate cancer cell lines](cell-lines-microarray.png)
 
 The red highlighted circles correspond to FOXA1.
 As shown, FOXA1 resides above the 75th percentile of genes expressed as mRNA across
 various prostate cancer cell lines.
+
+#### RNA-seq evidence
+
+Using RNA-seq data from the DEPMAP project, we see the following distribution of
+mRNAs for various cell lines.
+
+![FOXA1 mRNA abundance in prostate cancer cell lines](cell-lines-seq.png)
+
+Again, the red highlighted circles correspond to FOXA1.
 
 ## Conclusions
