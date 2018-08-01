@@ -3,7 +3,7 @@
 # ==============================================================================
 suppressMessages(library("data.table"))
 suppressMessages(library("ggplot2"))
-suppressMessages(library("biomaRt"))
+# suppressMessages(library("biomaRt"))
 
 # ==============================================================================
 # Data
@@ -64,28 +64,56 @@ affyids <- fread(
     col.names = c("Accession", "Gene")
 )
 
-# remove probes that map to multiple annotations as to not skew the distribution
+# don't annotate probe with multiple annotations
+# doing so miscounts the number of probes in total, and skews the distributions
 unique_probes <- names(which(table(affyids$Accession) == 1))
 affyids_unique <- affyids[Accession %in% unique_probes]
 
 # select only expression columns relating to prostate cell lines and
-# melt data into 2 columns, one for the cell line, one for the expression value
 prostate_idx <- grep("PROSTATE", colnames(ccle))
+# drop PRECLH_PROSTATE example (can't find any information about it)
+prostate_idx <- prostate_idx[-8]
 prostate_idx <- c(1, 2, prostate_idx)
 
 # assign HUGO gene names to probe IDs and expression
+# only probes with unique HUGO annotations get annotated
+# no probes are removed from the actual data
 ccle_annotated <- merge(
     x = ccle[, ..prostate_idx],
     y = affyids_unique,
     all.x = TRUE
 )
 
+# melt data into 2 columns, one for the cell line, one for the expression value
 pca_exprs <- melt(
     ccle_annotated,
-    id.vars = c(11, 1, 2)  # melt based on first two columns
+    id.vars = c(10, 1, 2)  # melt based on annotations
 )
 colnames(pca_exprs) <- c("Gene", "Accession", "Description", "Cell", "Expression")
 
+# map cell names to more visually-friendly names
+pca_exprs[Cell == "22RV1_PROSTATE", Cell := "22Rv1"]
+pca_exprs[Cell == "DU145_PROSTATE", Cell := "DU145"]
+pca_exprs[Cell == "LNCAPCLONEFGC_PROSTATE", Cell := "LNCaP"]
+pca_exprs[Cell == "MDAPCA2B_PROSTATE", Cell := "MDA PCa 2B"]
+pca_exprs[Cell == "NCIH660_PROSTATE", Cell := "NCI-H660"]
+pca_exprs[Cell == "PC3_PROSTATE", Cell := "PC3"]
+pca_exprs[Cell == "VCAP_PROSTATE", Cell := "VCaP"]
+
+# order the factor for plotting
+pca_exprs$Cell <- factor(
+    pca_exprs$Cell,
+    levels = c(
+        "22Rv1",
+        "DU145",
+        "LNCaP",
+        "MDA PCa 2B",
+        "NCI-H660",
+        "PC3",
+        "VCaP"
+    ),
+    ordered = TRUE
+)
 
 # ==============================================================================
 # Plots
@@ -101,7 +129,6 @@ gg <- (
         size = 4
     )
     + labs(x = "Cell Line", y = "Gene Expression (RMA-normalized)")
-    + theme(axis.text.x = element_text(angle = 45, hjust = 1))
     + guides(fill = FALSE)
 )
 ggsave(
