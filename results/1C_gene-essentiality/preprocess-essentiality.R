@@ -41,21 +41,6 @@ achilles_rnai <- fread(
     skip = 2
 )
 
-# Cell lines of interest
-crispr_lines <- grep("PROSTATE", colnames(achilles_crispr))
-rnai_lines <- grep("PROSTATE", colnames(achilles_rnai))
-
-prostate_crispr <- c(
-    "LNCAPCLONEFGC_PROSTATE",
-    "PC3_PROSTATE"
-)
-prostate_rnai <- c(
-    "22RV1_PROSTATE",
-    "NCHIH660_PROSTATE",
-    "VCAP_PROSTATE"
-)
-gene <- "FOXA1"
-
 # melted data.table for essentiality across all cell lines
 crispr_table <- melt(
     achilles_crispr,
@@ -72,6 +57,8 @@ crispr_table[, Tissue := factor(str_to_title(Tissue))]
 # extract readable name of cell line
 crispr_table[, Line := substring(Cell, 1, Underscore - 1)]
 crispr_table[, Line := factor(Line)]
+# further underscores in Tissue replaced with spaces
+crispr_table[, Tissue := gsub("_", " ", Tissue)]
 # remove unused column
 crispr_table[, Underscore := NULL]
 
@@ -90,21 +77,30 @@ rnai_table[, Tissue := factor(str_to_title(Tissue))]
 # extract readable name of cell line
 rnai_table[, Line := substring(Cell, 1, Underscore - 1)]
 rnai_table[, Line := factor(Line)]
+# further underscores in Tissue replaced with spaces
+rnai_table[, Tissue := gsub("_", " ", Tissue)]
 # remove unused column
 rnai_table[, Underscore := NULL]
+
+# combine tables for single data file
+crispr_table[, Method := "CRISPR"]
+rnai_table[, Method := "RNAi"]
+all_table <- rbindlist(
+    list(crispr_table, rnai_table)
+)
+
+# fix the naming on a few selected cell lines
+all_table[Line == "22RV1", Line := "22Rv1"]
+all_table[Line == "LNCAPCLONEFGC", Line := "LNCaP"]
+all_table[Line == "NCIH660", Line := "NCI-H660"]
+all_table[Line == "VCAP", Line := "VCaP"]
 
 # ==============================================================================
 # Save
 # ==============================================================================
 fwrite(
-    rnai_table,
-    "essentiality-rnai.tsv",
-    col.names = TRUE,
-    sep = "\t"
-)
-fwrite(
-    crispr_table,
-    "essentiality-crispr.tsv",
+    all_table,
+    "essentiality-scores.tsv",
     col.names = TRUE,
     sep = "\t"
 )

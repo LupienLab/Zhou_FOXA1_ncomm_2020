@@ -4,7 +4,6 @@ rule preprocess:
         rnai = "../../data/external/Achilles_QC_v2.4.3.rnai.Gs.gct",
         crispr = "../../data/external/Achilles_v3.3.8.Gs.gct"
     output:
-        "essentiality-rnai.tsv",
-        "essentiality-crispr.tsv"
+        "essentiality-scores.tsv"
     shell:
         "Rscript {input.script} {input.rnai} {input.crispr}"
