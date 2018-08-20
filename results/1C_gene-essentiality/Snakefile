@@ -1,3 +1,9 @@
+rule all:
+    input:
+        "essentiality-all-crispr.png",
+        "essentiality-all-rnai.png",
+        "essentiality-prostate-all.png"
+
 rule preprocess:
     input:
         script = "preprocess-essentiality.R",
@@ -7,3 +13,14 @@ rule preprocess:
         "essentiality-scores.tsv"
     shell:
         "Rscript {input.script} {input.rnai} {input.crispr}"
+
+rule plots:
+    input:
+        script = "plots.R",
+        data = "essentiality-scores.tsv"
+    output:
+        "essentiality-all-crispr.png",
+        "essentiality-all-rnai.png",
+        "essentiality-prostate-all.png"
+    shell:
+        "Rscript {input.script}"
