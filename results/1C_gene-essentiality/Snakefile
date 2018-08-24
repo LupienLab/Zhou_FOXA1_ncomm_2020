@@ -2,7 +2,8 @@ rule all:
     input:
         "essentiality-all-crispr.png",
         "essentiality-all-rnai.png",
-        "essentiality-prostate-all.png"
+        "essentiality-prostate-all.png",
+        "essentiality-combinations.tsv"
 
 rule preprocess:
     input:
@@ -22,5 +23,14 @@ rule plots:
         "essentiality-all-crispr.png",
         "essentiality-all-rnai.png",
         "essentiality-prostate-all.png"
+    shell:
+        "Rscript {input.script}"
+
+rule combinations:
+    input:
+        script = "combinations.R",
+        data = "essentiality-scores.tsv"
+    output:
+        "essentiality-combinations.tsv"
     shell:
         "Rscript {input.script}"

@@ -15,9 +15,7 @@ all_table <- fread(
 )
 
 crispr <- all_table[Method == "CRISPR"]
-# crispr[, Tissue := factor(Tissue)]
 rnai <- all_table[Method == "RNAi"]
-# rnai[, Tissue := factor(Tissue)]
 
 # ==============================================================================
 # Plots
