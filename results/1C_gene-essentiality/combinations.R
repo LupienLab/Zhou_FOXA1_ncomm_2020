@@ -95,7 +95,6 @@ rnai_combs <- merge(
 )
 colnames(rnai_combs) <- c("Line3", "Line2", "Line1", "Score1", "Score2", "Score3")
 rnai_combs_scores <- rnai_combs[, median(c(Score1, Score2, Score3)), by = 1:nrow(rnai_combs)]
-saveRDS(rnai_combs, "rnai_combs.rds")
 
 p2 <- list(
     crispr = crispr_combs[Median < medians$crispr, .N] / n_perm$crispr,
