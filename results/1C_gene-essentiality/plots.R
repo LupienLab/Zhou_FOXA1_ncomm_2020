@@ -17,6 +17,24 @@ all_table <- fread(
 crispr <- all_table[Method == "CRISPR"]
 rnai <- all_table[Method == "RNAi"]
 
+high_percentile_crispr <- crispr[, quantile(Score, 0.06), by = Line]
+high_percentile_crispr <- merge(
+    high_percentile_crispr,
+    crispr[Description == "FOXA1", .(Line, Tissue, Score)],
+    by = "Line"
+)
+high_percentile_crispr[, Low := Score < V1]
+high_percentile_crispr[Low == TRUE]
+
+high_percentile_rnai <- rnai[, quantile(Score, 0.06, na.rm = TRUE), by = Line]
+high_percentile_rnai <- merge(
+    high_percentile_rnai,
+    rnai[Description == "FOXA1", .(Line, Tissue, Score)],
+    by = "Line"
+)
+high_percentile_rnai[, Low := Score < V1]
+high_percentile_rnai[Low == TRUE]
+
 # ==============================================================================
 # Plots
 # ==============================================================================
