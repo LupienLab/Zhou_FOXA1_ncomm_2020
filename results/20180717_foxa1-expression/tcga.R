@@ -104,8 +104,20 @@ gg <- (
         size = 4
     )
     + labs(x = "Patient", y = "log10(FPKM + 1)")
-    + theme(axis.text.x = element_text(angle = 90, hjust = 1))
     + guides(fill = FALSE)
+    + theme(
+        # font sizes for axes and legend
+        axis.text = element_text(size = 12),
+        axis.text.x = element_text(angle = 90, hjust = 1)
+        axis.title = element_text(size = 16),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 16),
+        # plot background colouring
+        axis.ticks = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(colour = "#9e9e9e"),
+        panel.background = element_rect(fill = "transparent")
+    )
 )
 ggsave(
     "tcga.png",
