@@ -25,6 +25,14 @@ rule plot_cell_line_seq_expression:
     shell:
         "Rscript {input.script}"
 
+rule plot_tcga:
+    input:
+        script = "tcga.R"
+    output:
+        "tcga.png"
+    shell:
+        "Rscript {input.script}"
+
 
 rule affyids:
     input:
