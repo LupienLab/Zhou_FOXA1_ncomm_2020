@@ -2,7 +2,8 @@ rule all:
     input:
         "cell-lines-microarray.png",
         "cell-lines-seq.png",
-        "tcga.png"
+        "tcga-percentile.png",
+        "tcga-FPKM.png"
 
 
 rule plot_cell_line_microarray_expression:
@@ -25,14 +26,6 @@ rule plot_cell_line_seq_expression:
     shell:
         "Rscript {input.script}"
 
-rule plot_tcga:
-    input:
-        script = "tcga.R"
-    output:
-        "tcga.png"
-    shell:
-        "Rscript {input.script}"
-
 
 rule affyids:
     input:
@@ -47,5 +40,36 @@ rule ensembl_ids:
         script = "get-ensembl-genes.R"
     output:
         "ensembl-gene-IDs.tsv"
+    shell:
+        "Rscript {input.script}"
+
+rule preprocess_tcga:
+    input:
+        script = "preprocess-tcga.R",
+        data = "../../data/external/TCGA-PRAD/gdc_manifest_20180717_162017.txt"
+    output:
+        "tcga-aggregated.tsv"
+    shell:
+        "Rscript {input.script}"
+
+rule tcga_percentiles:
+    input:
+        script = "calculate-tcga-expression-percentiles.R",
+        tcga = "tcga-aggregated.tsv",
+        ensembl = "ensembl-gene-IDs.tsv"
+    output:
+        "tcga-expression-percentiles.tsv"
+    shell:
+        "Rscript {input.script}"
+
+rule plot_tcga:
+    input:
+        script = "plot-tcga.R",
+        tcga = "tcga-aggregated.tsv",
+        ensembl = "ensembl-gene-IDs.tsv",
+        percentiles = "tcga-expression-percentiles.tsv"
+    output:
+        "tcga-percentile.png",
+        "tcga-FPKM.png"
     shell:
         "Rscript {input.script}"

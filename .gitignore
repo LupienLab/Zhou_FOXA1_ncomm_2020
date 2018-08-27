@@ -35,3 +35,4 @@ vignettes/*.pdf
 # Mac-related files
 .DS_Store
 ._*
+.snakemake/

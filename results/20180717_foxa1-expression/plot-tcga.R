@@ -8,46 +8,11 @@ suppressMessages(library("ggplot2"))
 # Data
 # ==============================================================================
 # read TCGA manifest data
-manifest <- fread(
-    "../../data/external/TCGA-PRAD/gdc_manifest_20180717_162017.txt",
+tcga <- fread(
+    "tcga-aggregated.tsv",
     header = TRUE,
     sep = "\t"
 )
-
-# take first few letters as shorter ID for each patient
-# I've checked, and yes these IDs are unique
-separate_ids <- strsplit(manifest$id, "-")
-small_ids <- sapply(separate_ids, function(x) x[1])
-manifest[, PatientID := small_ids]
-
-# read first patient file
-tcga <- fread(
-    paste0("zcat ../../data/external/TCGA-PRAD/", manifest[1, filename]),
-    header = FALSE,
-    col.names = c("EnsemblID", manifest[1, PatientID]),
-    sep = "\t"
-)
-
-# read and merge subsequent patients' data
-for (i in 2:manifest[, .N - 1]) {
-    print(i)
-    newdf = fread(
-        paste0("zcat ../../data/external/TCGA-PRAD/", manifest[i, filename]),
-        header = FALSE,
-        col.names = c("EnsemblID", manifest[i, PatientID]),
-        sep = "\t"
-    )
-    tcga <- merge(tcga, newdf)
-}
-
-
-# ==============================================================================
-# Analysis
-# ==============================================================================
-# strip EnsemblIDs of periods (i.e. their version number, just keep the gene ID)
-# all EnsemblIDs are 15 characters long
-# see https://useast.ensembl.org/Help/Faq?id=488
-tcga[, EnsemblID := substr(EnsemblID, 1, 15)]
 
 # load Ensembl gene IDs
 ensembl <- fread(
@@ -66,33 +31,44 @@ tcga <- merge(
     all.x = TRUE
 )
 
-# find FOXA1 expression percentile wrt all other mapped reads for that patient
-tcga_percentile <- as.data.table(apply(
-    tcga[, 2:11],
-    2,
-    function(x) trunc(rank(x, na.last = NA))/sum(!is.na(x))
-))
-tcga_percentile[, EnsemblID := tcga$EnsemblID]
-tcga_percentile[, Description := tcga$hgnc_symbol]
-tcga_percentile[Description == "FOXA1"]
+tcga_percentile <- fread(
+    "tcga-expression-percentiles.tsv",
+    header = TRUE,
+    sep = "\t"
+)
+
+# ==============================================================================
+# Analysis
+# ==============================================================================
+# get FOXA1 expression percentiles
+foxa1_percentiles <- data.table(
+    PatientID = colnames(tcga_percentile[Description == "FOXA1", .SD, .SDcols = 1:550]),
+    Percentile = as.vector(t(tcga_percentile[Description == "FOXA1", .SD, .SDcols = 1:550]))
+)
+# order by descreasing percentile value
+foxa1_percentiles <- foxa1_percentiles[order(-rank(Percentile))]
+foxa1_percentiles[, PatientID := factor(PatientID, levels = PatientID, ordered = TRUE)]
 
 # melt data together for parsing by ggplot
 pca_exprs <- melt(
     tcga,
     id.vars = c(1, 552)  # EnsemblID and HUGO name
 )
-# pca_exprs <- melt(
-#     tcga2[, c(1:100, 552)],
-#     id.vars = c(1, 101)  # EnsemblID and HUGO name
-# )
 colnames(pca_exprs) <- c("EnsemblID", "Description", "PatientID", "FPKM")
 pca_exprs[, logFPKM := log10(FPKM + 1)]
 
+# melt percentile data
+pca_percentile <- melt(
+    tcga_percentile,
+    id.vars = c(551, 552)  # EnsemblID and HUGO name
+)
+colnames(pca_percentile) <- c("EnsemblID", "Description", "PatientID", "Percentile")
 
 
 # ==============================================================================
 # Plots
 # ==============================================================================
+# FPKM plots
 gg <- (
     ggplot(data = pca_exprs, aes(x = PatientID, y = logFPKM, fill = PatientID))
     + geom_boxplot()
@@ -108,7 +84,7 @@ gg <- (
     + theme(
         # font sizes for axes and legend
         axis.text = element_text(size = 12),
-        axis.text.x = element_text(angle = 90, hjust = 1)
+        axis.text.x = element_text(angle = 90, hjust = 1),
         axis.title = element_text(size = 16),
         legend.text = element_text(size = 12),
         legend.title = element_text(size = 16),
@@ -120,9 +96,41 @@ gg <- (
     )
 )
 ggsave(
-    "tcga.png",
+    "tcga-FPKM.png",
     height = 12,
     width = 100,
+    units = "cm",
+    bg = "transparent"
+)
+
+# FOXA1 percentile plot
+gg <- (
+    ggplot(
+        data = foxa1_percentiles,
+        aes(x = PatientID, y = 100 * Percentile)
+    )
+    + geom_col()
+    + labs(x = "Patients", y = "Percentile of FOXA1 Expression")
+    + guides(fill = FALSE)
+    + coord_cartesian(ylim = c(50, 100))
+    + theme(
+        # font sizes for axes and legend
+        axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 16),
+        # plot background colouring
+        axis.ticks = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(colour = "#9e9e9e"),
+        panel.background = element_rect(fill = "transparent")
+    )
+)
+ggsave(
+    "tcga-percentile.png",
+    height = 12,
+    width = 40,
     units = "cm",
     bg = "transparent"
 )
