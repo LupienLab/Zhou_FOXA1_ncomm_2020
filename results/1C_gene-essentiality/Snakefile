@@ -1,0 +1,36 @@
+rule all:
+    input:
+        "essentiality-all-crispr.png",
+        "essentiality-all-rnai.png",
+        "essentiality-prostate-all.png",
+        "essentiality-combinations.tsv"
+
+rule preprocess:
+    input:
+        script = "preprocess-essentiality.R",
+        rnai = "../../data/external/Achilles/Achilles_QC_v2.4.3.rnai.Gs.gct",
+        crispr = "../../data/external/Achilles/Achilles_v3.3.8.Gs.gct"
+    output:
+        "essentiality-scores.tsv"
+    shell:
+        "Rscript {input.script} {input.rnai} {input.crispr}"
+
+rule plots:
+    input:
+        script = "plots.R",
+        data = "essentiality-scores.tsv"
+    output:
+        "essentiality-all-crispr.png",
+        "essentiality-all-rnai.png",
+        "essentiality-prostate-all.png"
+    shell:
+        "Rscript {input.script}"
+
+rule combinations:
+    input:
+        script = "combinations.R",
+        data = "essentiality-scores.tsv"
+    output:
+        "essentiality-combinations.tsv"
+    shell:
+        "Rscript {input.script}"
