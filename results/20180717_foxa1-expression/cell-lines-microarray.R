@@ -89,6 +89,9 @@ pca_exprs$Cell <- factor(
     ordered = TRUE
 )
 
+# calculate expression percentiles
+pca_exprs[, Percentile := trunc(rank(Expression, na.last = NA)) / sum(!is.na(Expression)), by = Cell]
+
 # ==============================================================================
 # Plots
 # ==============================================================================
@@ -104,6 +107,18 @@ gg <- (
     )
     + labs(x = "Cell Line", y = "Gene Expression (RMA-normalized)")
     + guides(fill = FALSE)
+    + theme(
+        # font sizes for axes and legend
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 16),
+        # plot background colouring
+        axis.ticks = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(colour = "#9e9e9e"),
+        panel.background = element_rect(fill = "transparent")
+    )
 )
 ggsave(
     "cell-lines-microarray.png",
