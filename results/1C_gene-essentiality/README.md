@@ -6,18 +6,18 @@ Displaying gene essentiality, and highlighting FOXA1 from Project Achilles data.
 
 Project Achilles contains data that tests for "gene essentiality" in a variety of cell lines.
 They knock down/out genes using a variety of methods.
-The two methods I've focused on here are either RNAi-based (`/data/external/Achilles_QC_v2.4.3.rnai.Gs.gct`)
-or CRISPR-Cas9 (`/data/external/Achilles_v3.3.8.Gs.gct`).
+The two methods I've focused on here are either RNAi-based (`/data/external/Achilles/Achilles_QC_v2.4.3.rnai.Gs.gct`)
+or CRISPR-Cas9 (`/data/external/Achilles/Achilles_v3.3.8.Gs.gct`).
 
 In these datasets, there are gene essentiality data for 5 different prostate cancer cell lines.
 
-| Cell Line Name | Method |
-|----------------|--------|
-| 22RV1 | RNAi |
-| NCI-H660 | RNAi |
-| VCaP | RNAi |
-| PC3 | CRISPR-Cas9 |
-| LNCaP | CRISPR-Cas9 |
+| Cell Line Name | Method      |
+| -------------- | ----------- |
+| 22RV1          | RNAi        |
+| NCI-H660       | RNAi        |
+| VCaP           | RNAi        |
+| PC3            | CRISPR-Cas9 |
+| LNCaP          | CRISPR-Cas9 |
 
 While not specifically in the data for this folder, ENCODE only contains Hi-C data
 for LNCaP cells, no other prostate cancer cell lines as of this date.
