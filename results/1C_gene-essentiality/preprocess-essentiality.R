@@ -22,8 +22,8 @@ if (!interactive()) {
     ARGS <- PARSER$parse_args()
 } else {
     ARGS <- list(
-        rnai = "../../data/external/Achilles_QC_v2.4.3.rnai.Gs.gct",
-        crispr = "../../data/external/Achilles_v3.3.8.Gs.gct"
+        rnai = "../../data/external/Achilles/Achilles_QC_v2.4.3.rnai.Gs.gct",
+        crispr = "../../data/external/Achilles/Achilles_v3.3.8.Gs.gct"
     )
 }
 
