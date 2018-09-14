@@ -29,7 +29,7 @@ and their CRISPR-Cas9 data as "z-score normalized".
 
 The visualization of the data for the prostate cancer cell lines is below.
 
-![Prostate cancer cell line gene essentiality](essentiality.png)
+![Prostate cancer cell line gene essentiality](essentiality-prostate-all.png)
 
 The essentiality score for FOXA1 is highlighted by the red diamond, in each sample.
 Across all the different prostate cancer lines, FOXA1 is listed as an "essential" gene
@@ -42,19 +42,44 @@ It's possible they modelled each set as _N_(0, σ^2), instead of _N_(0, 1).
 But even so, the NCI-H660 and VCaP distributions don't appear to be centred on 0.
 However, I'm not sure how meaningful a question this is, and whether it's worth pursuing.
 
-### Permutation Test
+### Permutation Tests
 
 FOXA1 is present in all cell lines, and its essentiality varies depending on the
 line and the tissue.
 
-![CRISPR essentiality scores](crispr-essentiality-all.png)
-![RNAi essentiality scores](rnai-essentiality-all.png)
+![CRISPR essentiality scores](essentiality-all-crispr.png)
+![RNAi essentiality scores](essentiality-all-rnai.png)
 
 To explicitly show that FOXA1 is particularly important in prostate cancer cells
 over other cell lines, we perform a permutation test.
 
-> INSERT DETAILS HERE
+#### Test 1
+
+We calculate the probability that a randomly selected cell line will have an essentiality score lower than that of a prostate line.
+This is done for both the CRISPRi and RNAi data.
+
+The probabilities are as follows:
+
+| Essentiality Method | _p_                |
+| ------------------- | ------------------ |
+| CRISPR              | 0.121212121212121  |
+| RNAi                | 0.0339506172839506 |
+
+#### Test 2
+
+We calculate the median essentiality score for the 2 (3) prostate cancer lines from the CRISPRi (RNAi) data.
+We then calculate the median score for all possible combinations of 2 (3) cell lines from the CRISPRi (RNAi) data.
+We then find the proportion of combinations that have a smaller essentiality score (i.e. more essential) than the observed one.
+
+The results for these 2 tests are as follows:
+
+| Essentiality Method | _p_                 |
+| ------------------- | ------------------- |
+| CRISPR              | 0.0587121212121212  |
+| RNAi                | 0.00454973556473231 |
+
+See `combinations.R` for the code used to generate these results.
 
 ## Conclusions
 
-FOXA1 is observable as an essential gene in a variety of prostate cancer cell lines.
+FOXA1 is observable as an essential gene in a variety of prostate cancer cell lines (most importantly for this project, LNCaP, VCaP, and 22Rv1).
