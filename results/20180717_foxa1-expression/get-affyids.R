@@ -2,6 +2,8 @@ suppressMessages(library("biomaRt"))
 suppressMessages(library("data.table"))
 # get Affymetrix Probe IDs (RUN WHEN CONNECTED TO INTERNET)
 
+cat("MAKE SURE YOU CAN ACCESS THE INTERNET WHEN RUNNING THIS SCRIPT\n")
+
 ensembl <- useMart("ensembl")
 ensembl <- useDataset("hsapiens_gene_ensembl", mart = ensembl)
 affyids <- getBM(
