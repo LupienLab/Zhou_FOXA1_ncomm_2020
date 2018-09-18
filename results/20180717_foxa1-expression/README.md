@@ -85,6 +85,8 @@ Moreover, we see that, compared to other cancer types, FOXA1 is mostly highly ex
 
 ![FOXA1 mRNA abundance in cancer cell lines](tcga-tissue-FOXA1-expression.png)
 
+This figure was obtained using data from the CCLE for FOXA1.
+
 ## Conclusions
 
 FOXA1 is highly expressed in prostate tissue, and expressed moreso in prostate tissue over other tissues.
