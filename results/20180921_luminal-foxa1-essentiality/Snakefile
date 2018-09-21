@@ -1,0 +1,22 @@
+rule all:
+    input:
+        "essentiality-combinations_luminal.tsv",
+        "essentiality-combinations_breast.tsv"
+
+rule combinations_luminal:
+    input:
+        script = "combinations_luminal.R",
+        data = "../1C_gene-essentiality/essentiality-scores.tsv"
+    output:
+        "essentiality-combinations_luminal.tsv"
+    shell:
+        "Rscript {input.script}"
+
+rule combinations_breast:
+    input:
+        script = "combinations_breast.R",
+        data = "../1C_gene-essentiality/essentiality-scores.tsv"
+    output:
+        "essentiality-combinations_breast.tsv"
+    shell:
+        "Rscript {input.script}"
