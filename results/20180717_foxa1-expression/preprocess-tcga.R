@@ -28,8 +28,8 @@ tcga <- fread(
 )
 
 # read and merge subsequent patients' data
-for (i in 2:manifest[, .N - 1]) {
-    cat(i, "of", manifest[, .N - 1], "\n")
+for (i in 2:manifest[, .N]) {
+    cat(i, "of", manifest[, .N], "\n")
     newdf = fread(
         paste0("zcat ../../data/external/TCGA-PRAD/", manifest[i, filename]),
         header = FALSE,
