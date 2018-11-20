@@ -67,7 +67,8 @@ rule plot_tcga:
         tcga = "../../data/external/TCGA-PRAD/TCGA_Xena_PRAD.rds",
         percentiles = "tcga-expression-percentiles.tsv"
     output:
-        "tcga-percentile.png",
+        "tcga-percentile-col.png",
+        "tcga-percentile-point.png",
         "tcga-RSEM.png"
     shell:
         "Rscript {input.script}"

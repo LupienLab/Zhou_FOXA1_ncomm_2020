@@ -71,7 +71,38 @@ gg <- (
     )
 )
 ggsave(
-    "tcga-percentile.png",
+    "tcga-percentile-col.png",
+    height = 12,
+    width = 40,
+    units = "cm",
+    bg = "transparent"
+)
+
+gg <- (
+    ggplot(
+        data = foxa1_percentiles,
+        aes(x = PatientID, y = 100 * Percentile)
+    )
+    + geom_point()
+    + labs(x = "Patients", y = "Percentile of FOXA1 Expression")
+    + guides(fill = FALSE)
+    + coord_cartesian(ylim = c(80, 100))
+    + theme(
+        # font sizes for axes and legend
+        axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 16),
+        # plot background colouring
+        axis.ticks = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(colour = "#9e9e9e"),
+        panel.background = element_rect(fill = "transparent")
+    )
+)
+ggsave(
+    "tcga-percentile-point.png",
     height = 12,
     width = 40,
     units = "cm",
