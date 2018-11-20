@@ -3,7 +3,7 @@ rule all:
         "cell-lines-microarray.png",
         "cell-lines-seq.png",
         "tcga-percentile.png",
-        "tcga-FPKM.png"
+        "tcga-RSEM.png"
 
 
 rule plot_cell_line_microarray_expression:
@@ -55,8 +55,7 @@ rule preprocess_tcga:
 rule tcga_percentiles:
     input:
         script = "calculate-tcga-expression-percentiles.R",
-        tcga = "tcga-aggregated.tsv",
-        ensembl = "ensembl-gene-IDs.tsv"
+        tcga = "../../data/external/TCGA-PRAD/TCGA_Xena_PRAD.rds"
     output:
         "tcga-expression-percentiles.tsv"
     shell:
@@ -65,11 +64,11 @@ rule tcga_percentiles:
 rule plot_tcga:
     input:
         script = "plot-tcga.R",
-        tcga = "tcga-aggregated.tsv",
-        ensembl = "ensembl-gene-IDs.tsv",
+        tcga = "../../data/external/TCGA-PRAD/TCGA_Xena_PRAD.rds",
         percentiles = "tcga-expression-percentiles.tsv"
     output:
-        "tcga-percentile.png",
-        "tcga-FPKM.png"
+        "tcga-percentile-col.png",
+        "tcga-percentile-point.png",
+        "tcga-RSEM.png"
     shell:
         "Rscript {input.script}"
