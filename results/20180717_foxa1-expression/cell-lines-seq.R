@@ -62,12 +62,12 @@ gg <- (
     + geom_violin()
     + geom_point(
         data = pca_exprs[Description == "FOXA1"],
-        mapping = aes(x = Cell, y = log10(Expression + 1)),
+        mapping = aes(x = Cell, y = log2(Expression + 1)),
         fill = "red",
         pch = 21,
         size = 4
     )
-    + labs(x = "Cell Line", y = "log10(RPKM + 1)")
+    + labs(x = "Cell Line", y = "Gene Expression log2(RPKM + 1)")
     + guides(fill = FALSE)
     + theme(
         # font sizes for axes and legend

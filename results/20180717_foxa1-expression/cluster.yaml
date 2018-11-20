@@ -1,0 +1,11 @@
+__default__:
+    params: "-V -cwd -q lupiengroup"
+
+ensembl_ids:
+    params: "-V -cwd -q download.q"
+
+affyids:
+    params: "-V -cwd -q download.q"
+
+plot_tcga:
+    params: "-V -cwd -q lupiengroup -l h_vmem=16G -l mem_requested=16G"

@@ -75,4 +75,19 @@ Again, the red highlighted circles correspond to FOXA1.
 
 ### FOXA1 is highly expressed in prostate cancer
 
+Using RNA-seq data from TCGA, we see across all patients what percentile of expression FOXA1 falls in.
+
+![FOXA1 mRNA abundance in prostate cancer tissues](tcga-percentile.png)
+
+Specifically, 89.6% of patients (493 / 550) have FOXA1 in the 99th percentile of genes expressed.
+
+Moreover, we see that, compared to other cancer types, FOXA1 is mostly highly expressed in prostate cancer cell lines over lines of other tissue origins.
+
+![FOXA1 mRNA abundance in cancer cell lines](tcga-tissue-FOXA1-expression.png)
+
+This figure was obtained using data from the CCLE for FOXA1.
+
 ## Conclusions
+
+FOXA1 is highly expressed in prostate tissue, and expressed moreso in prostate tissue over other tissues.
+FOXA1 is also highly expressed in a variety of prostate cancer cell lines, including all of the lines we have used for subsequent experiments.
