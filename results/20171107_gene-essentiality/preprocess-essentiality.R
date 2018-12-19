@@ -10,96 +10,95 @@ if (!interactive()) {
         description = "Preprocess Achilles data for simpler processing"
     )
     PARSER$add_argument(
-        "rnai",
+        "essentiality",
         type = "character",
-        help = "GCT file containing Achilles RNAi-based essentiality scores"
+        help = "CSV file containing DEPMAP gene essentiality scores"
     )
     PARSER$add_argument(
-        "crispr",
+        "metadata",
         type = "character",
-        help = "GCT file containing Achilles CRISPR-based essentiality scores"
+        help = "Metadata for cell lines used"
     )
     ARGS <- PARSER$parse_args()
 } else {
     ARGS <- list(
-        rnai = "../../data/external/Achilles/Achilles_QC_v2.4.3.rnai.Gs.gct",
-        crispr = "../../data/external/Achilles/Achilles_v3.3.8.Gs.gct"
+        essentiality = "../../data/external/DEPMAP/D2_combined_gene_dep_scores.csv",
+        metadata = "../../data/external/DEPMAP/DepMap-2018q4-celllines.csv"
     )
 }
 
 # ==============================================================================
 # Data
 # ==============================================================================
-achilles_crispr <- fread(
-    ARGS$crispr,
-    header = TRUE,
-    skip = 2
-)
-achilles_rnai <- fread(
-    ARGS$rnai,
-    header = TRUE,
-    skip = 2
-)
+# read in RNAi data
+cat("Reading data\n")
+rnai = fread(ARGS$essentiality, header = TRUE)
+# change first column name
+colnames(rnai)[1] = "Gene"
 
-# melted data.table for essentiality across all cell lines
-crispr_table <- melt(
-    achilles_crispr,
-    id.vars = "Description",
-    measure.vars = 3:35,
+# read in cell line metadata
+metadata = fread(ARGS$metadata, header = TRUE)
+
+# ==============================================================================
+# Preprocessing
+# ==============================================================================
+cat("Removing non-cancer cell lines\n")
+# filter out non-cancer cell lines
+#   list of all non-cancer values in "Primary Disease" column in metadata
+noncancer_disease_classes = c(
+    "Fibroblast",
+    "Immortalized",
+    "immortalized_epithelial",
+    "Non-Cancerous",
+    "Primary Cells",
+    "unknown"
+)
+#   find all non-cancerous lines
+noncancer_lines = metadata[
+    get("Primary Disease") %in% noncancer_disease_classes,
+    CCLE_Name
+]
+#   remove columns corresponding to all non-cancerous lines
+noncancer_col_idx = which(colnames(rnai) %in% noncancer_lines)
+rnai = rnai[, .SD, .SDcols = -noncancer_col_idx]
+
+cat("Aggregating and parsing data\n")
+rnai_table = melt(
+    rnai,
+    id.vars = "Gene",
     variable.name = "Cell",
     value.name = "Score"
 )
-# find index of underscore in string
-crispr_table[, Underscore := as.vector(regexpr("_", Cell))]
-# classify cell line based on tissue type
-crispr_table[, Tissue := substring(Cell, Underscore + 1, 100)]
-crispr_table[, Tissue := factor(str_to_title(Tissue))]
-# extract readable name of cell line
-crispr_table[, Line := substring(Cell, 1, Underscore - 1)]
-crispr_table[, Line := factor(Line)]
-# further underscores in Tissue replaced with spaces
-crispr_table[, Tissue := gsub("_", " ", Tissue)]
-# remove unused column
-crispr_table[, Underscore := NULL]
-
-rnai_table <- melt(
-    achilles_rnai,
-    id.vars = "Description",
-    measure.vars = 3:218,
-    variable.name = "Cell",
-    value.name = "Score"
-)
-# find index of underscore in string
+# clean up text for simpler parsing
+#   find index of underscore in string
 rnai_table[, Underscore := as.vector(regexpr("_", Cell))]
-# classify cell line based on tissue type
+#   classify cell line based on tissue type
 rnai_table[, Tissue := substring(Cell, Underscore + 1, 100)]
 rnai_table[, Tissue := factor(str_to_title(Tissue))]
-# extract readable name of cell line
+#   extract readable name of cell line
 rnai_table[, Line := substring(Cell, 1, Underscore - 1)]
 rnai_table[, Line := factor(Line)]
-# further underscores in Tissue replaced with spaces
+#   further underscores in Tissue replaced with spaces
 rnai_table[, Tissue := gsub("_", " ", Tissue)]
-# remove unused column
+#   remove unused column
 rnai_table[, Underscore := NULL]
+#   find location of brackets in Gene column
+rnai_table[, Gene := gsub(" \\(\\d+\\)", "", Gene)]
 
-# combine tables for single data file
-crispr_table[, Method := "CRISPR"]
-rnai_table[, Method := "RNAi"]
-all_table <- rbindlist(
-    list(crispr_table, rnai_table)
-)
-
-# fix the naming on a few selected cell lines
-all_table[Line == "22RV1", Line := "22Rv1"]
-all_table[Line == "LNCAPCLONEFGC", Line := "LNCaP"]
-all_table[Line == "NCIH660", Line := "NCI-H660"]
-all_table[Line == "VCAP", Line := "VCaP"]
+# change the naming on the prostate cancer cell lines for more pleasant viewing
+rnai_table[Line == "22RV1", Line := "22Rv1"]
+rnai_table[Line == "LNCAPCLONEFGC", Line := "LNCaP"]
+rnai_table[Line == "MDAPCA2B", Line := "MDA PCa 2B"]
+rnai_table[Line == "NCIH660", Line := "NCI-H660"]
+rnai_table[Line == "PRECLH", Line := "PrEC LH"]
+rnai_table[Line == "VCAP", Line := "VCaP"]
 
 # ==============================================================================
 # Save
 # ==============================================================================
+cat("Saving combined data\n")
 fwrite(
-    all_table,
+    rnai_table,
     "essentiality-scores.tsv",
     col.names = TRUE,
     sep = "\t"

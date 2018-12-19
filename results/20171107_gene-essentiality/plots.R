@@ -8,55 +8,50 @@ suppressMessages(library("data.table"))
 # Data
 # ==============================================================================
 # read in preprocessed data
-all_table <- fread(
+rnai = fread(
     "essentiality-scores.tsv",
     header = TRUE,
     sep = "\t"
 )
 
-crispr <- all_table[Method == "CRISPR"]
-rnai <- all_table[Method == "RNAi"]
 
-high_percentile_crispr <- crispr[, quantile(Score, 0.06), by = Line]
-high_percentile_crispr <- merge(
-    high_percentile_crispr,
-    crispr[Description == "FOXA1", .(Line, Tissue, Score)],
-    by = "Line"
-)
-high_percentile_crispr[, Low := Score < V1]
-high_percentile_crispr[Low == TRUE]
-
-high_percentile_rnai <- rnai[, quantile(Score, 0.06, na.rm = TRUE), by = Line]
-high_percentile_rnai <- merge(
-    high_percentile_rnai,
-    rnai[Description == "FOXA1", .(Line, Tissue, Score)],
-    by = "Line"
-)
-high_percentile_rnai[, Low := Score < V1]
-high_percentile_rnai[Low == TRUE]
+foxa1 = rnai[Gene == "FOXA1"]
+foxa1_medians = foxa1[, median(Score, na.rm = TRUE), by = Tissue]
+foxa1[, Tissue := factor(Tissue, levels = foxa1_medians[order(V1), Tissue], ordered = TRUE)]
 
 # ==============================================================================
 # Plots
 # ==============================================================================
-gg_essentiality <- (
+gg_essentiality = (
     ggplot(
-        data = all_table[Tissue == "Prostate"],
-        mapping = aes(x = Line, y = Score, fill = Method)
+        data = rnai[Tissue == "Prostate"],
+        mapping = aes(x = Line, y = Score)
     )
-    + geom_boxplot()
+    + geom_violin(fill = "#26A69A")
+    + geom_boxplot(width = 0.05, fill = "#26A69A")
     + geom_point(
-        data = all_table[Description == "FOXA1" & Tissue == "Prostate"],
+        data = rnai[Gene == "FOXA1" & Tissue == "Prostate"],
         mapping = aes(x = Line, y = Score),
-        fill = "red",
+        fill = "#EF5350",
         pch = 21,
-        size = 4
+        size = 4,
+        alpha = 0.8
     )
-    + labs(x = "Cell Line", y = "Gene Essentiality Score")
-    + guides(fill = guide_legend(title = "Method"))
-    + lims(y = c(-5, 5))
+    + geom_point(
+        data = rnai[Gene == "FOXA1" & Tissue == "Prostate"],
+        mapping = aes(x = Line, y = Score),
+        fill = "black",
+        pch = 21,
+        size = 0.25
+    )
+    + labs(x = NULL, y = "Gene Essentiality Score")
+    + guides(fill = FALSE)
+    + scale_y_continuous(breaks = seq(-3, 3, 0.5), limits = c(-2.7, 2))
+    + theme_classic()
     + theme(
         # font sizes for axes and legend
-        axis.text = element_text(size = 12),
+        axis.text.x = element_text(size = 8, angle = 90, vjust = 0),
+        axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 16),
         legend.text = element_text(size = 12),
         legend.title = element_text(size = 16),
@@ -68,21 +63,22 @@ gg_essentiality <- (
     )
 )
 ggsave(
-    filename = "essentiality-prostate-all.png",
+    filename = "essentiality-prostate.png",
     plot = gg_essentiality,
     height = 12,
     width = 20,
     units = "cm"
 )
 
-# CRISPR knockout plots for FOXA1 in all cell lines
-gg_foxa1_crispr <- (
-    ggplot(data = crispr)
+# RNAi plots for FOXA1 in all cell lines compared to all other genes
+gg_all = (
+    ggplot()
     + geom_boxplot(
-        aes(x = Line, y = Score, fill = Tissue)
+        data = rnai,
+        mapping = aes(x = Line, y = Score, fill = Tissue)
     )
     + geom_point(
-        data = crispr[Description == "FOXA1"],
+        data = foxa1,
         mapping = aes(x = Line, y = Score),
         fill = "red",
         pch = 21,
@@ -90,47 +86,11 @@ gg_foxa1_crispr <- (
     )
     + labs(x = "Cell Line", y = "Essentiality Score")
     + guides(fill = FALSE)
-    + ggtitle("CRISPR Essentiality Scores")
-    + facet_grid(. ~ Tissue, scales = "free_x")
+    + facet_wrap(~ Tissue, scales = 'free_x')
+    + theme_classic()
     + theme(
         # font sizes for axes and legend
-        axis.text = element_text(size = 6, angle = 90, vjust = 1),
-        strip.text.x = element_text(size = 6),
-        # plot background colouring
-        axis.ticks = element_blank(),
-        panel.grid.major.x = element_blank(),
-        panel.grid.major.y = element_line(colour = "#9e9e9e"),
-        panel.background = element_rect(fill = "transparent")
-    )
-)
-ggsave(
-    filename = "essentiality-all-crispr.png",
-    plot = gg_foxa1_crispr,
-    height = 12,
-    width = 40,
-    units = "cm"
-)
-
-# RNAi plots for FOXA1 in all cell lines
-gg_foxa1_rnai <- (
-    ggplot(data = rnai)
-    + geom_boxplot(
-        aes(x = Line, y = Score, fill = Tissue)
-    )
-    + geom_point(
-        data = rnai[Description == "FOXA1"],
-        mapping = aes(x = Line, y = Score),
-        fill = "red",
-        pch = 21,
-        size = 4
-    )
-    + labs(x = "Cell Line", y = "Essentiality Score")
-    + guides(fill = FALSE)
-    + ggtitle("RNAi Essentiality Scores")
-    + facet_wrap(~ Tissue, scales = "free_x")
-    + theme(
-        # font sizes for axes and legend
-        axis.text = element_text(size = 6, angle = 90, vjust = 1),
+        axis.text = element_text(size = 8, angle = 90, vjust = 1),
         strip.text.x = element_text(size = 8),
         # plot background colouring
         axis.ticks = element_blank(),
@@ -140,9 +100,41 @@ gg_foxa1_rnai <- (
     )
 )
 ggsave(
-    filename = "essentiality-all-rnai.png",
-    plot = gg_foxa1_rnai,
+    filename = "essentiality-all.png",
+    plot = gg_all,
     height = 30,
     width = 30,
+    units = "cm"
+)
+
+# RNAi plots for FOXA1 in all cell lines, grouped by tissue
+gg_foxa1 = (
+    ggplot(
+        data = foxa1,
+        mapping = aes(x = Tissue, y = Score)
+    )
+    + stat_boxplot(geom ='errorbar')
+    + geom_boxplot(fill = "#26A69A")
+    + geom_point(
+        position = position_jitter(width = 0.1)
+    )
+    + labs(x = NULL, y = "FOXA1 Essentiality Score")
+    + theme_classic()
+    + theme(
+        # font sizes for axes and legend
+        axis.text = element_text(size = 6, angle = 90, hjust = 1),
+        strip.text.x = element_text(size = 8),
+        # plot background colouring
+        axis.ticks = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(colour = "#9e9e9e"),
+        panel.background = element_rect(fill = "transparent")
+    )
+)
+ggsave(
+    filename = "essentiality-foxa1.png",
+    plot = gg_foxa1,
+    height = 20,
+    width = 20,
     units = "cm"
 )

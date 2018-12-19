@@ -1,0 +1,18 @@
+import pandas as pd
+
+CONFIG = pd.read_csv("config.csv")
+
+rule all:
+    input:
+        "D2_combined_gene_dep_scores.csv",
+        "gene_effect.csv",
+        "DepMap-2018q4-celllines.csv"
+
+rule download:
+    output:
+        "{data}"
+    params:
+        url = lambda wildcards: CONFIG.loc[
+            CONFIG['Filename'] == wildcards.data, 'URL'].tolist()
+    shell:
+        "wget -o {wildcards.data} {params.url}"
