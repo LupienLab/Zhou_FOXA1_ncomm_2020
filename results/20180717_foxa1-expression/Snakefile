@@ -1,63 +1,30 @@
 rule all:
     input:
-        "cell-lines-microarray.png",
-        "cell-lines-seq.png",
-        "tcga-percentile.png",
-        "tcga-RSEM.png"
+        "cell-lines.pdf",
+        "tcga-percentile-col.pdf",
+        "tcga-percentile-point.pdf",
+        "tcga-RSEM.pdf"
 
 
-rule plot_cell_line_microarray_expression:
+rule plot_depmap:
     input:
-        script = "cell-lines-microarray.R",
-        data = "../../data/external/CCLE/CCLE_Expression_2012-09-29.res",
-        affyids = "Affymetrix_U133_Plus_2-probe-IDs.tsv"
+        script = "plot-depmap.R",
+        data = "../../data/external/DEPMAP/CCLE_depMap_18Q4_TPM_v2.csv"
     output:
-        "cell-lines-microarray.png"
+        "cell-lines.pdf"
     shell:
         "Rscript {input.script}"
 
 
-rule plot_cell_line_seq_expression:
-    input:
-        script = "cell-lines-seq.R",
-        data = "../../data/external/CCLE/CCLE_DepMap_18Q2_RNAseq_RPKM_20180502.gct"
-    output:
-        "cell-lines-seq.png"
-    shell:
-        "Rscript {input.script}"
-
-
-rule affyids:
-    input:
-        script = "get-affyids.R"
-    output:
-        "Affymetrix_U133_Plus_2-probe-IDs.tsv"
-    shell:
-        "Rscript {input.script}"
-
-rule ensembl_ids:
-    input:
-        script = "get-ensembl-genes.R"
-    output:
-        "ensembl-gene-IDs.tsv"
-    shell:
-        "Rscript {input.script}"
-
-rule preprocess_tcga:
-    input:
-        script = "preprocess-tcga.R",
-        data = "../../data/external/TCGA-PRAD/gdc_manifest_20180717_162017.txt"
-    output:
-        "tcga-aggregated.tsv"
-    shell:
-        "Rscript {input.script}"
-
-rule tcga_percentiles:
+rule percentiles:
     input:
         script = "calculate-tcga-expression-percentiles.R",
-        tcga = "../../data/external/TCGA-PRAD/TCGA_Xena_PRAD.rds"
+        tcga = "../../data/external/TCGA-PRAD/TCGA_Xena_PRAD.rds",
+        depmap = "../../data/external/DEPMAP/CCLE_depMap_18Q4_TPM_v2.csv",
+        depmap_meta = "../../data/external/DEPMAP/DepMap-2018q4-celllines.csv"
     output:
-        "tcga-expression-percentiles.tsv"
+        "percentiles-tcga.tsv",
+        "percentiles-foxa1.tsv"
     shell:
         "Rscript {input.script}"
 
@@ -65,10 +32,10 @@ rule plot_tcga:
     input:
         script = "plot-tcga.R",
         tcga = "../../data/external/TCGA-PRAD/TCGA_Xena_PRAD.rds",
-        percentiles = "tcga-expression-percentiles.tsv"
+        percentiles = "percentiles-tcga.tsv"
     output:
-        "tcga-percentile-col.png",
-        "tcga-percentile-point.png",
-        "tcga-RSEM.png"
+        "tcga-percentile-col.pdf",
+        "tcga-percentile-point.pdf",
+        "tcga-RSEM.pdf"
     shell:
         "Rscript {input.script}"

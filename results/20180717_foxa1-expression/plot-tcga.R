@@ -12,8 +12,8 @@ tcga = readRDS("../../data/external/TCGA-PRAD/TCGA_Xena_PRAD.rds")
 tcga_dt = as.data.table(tcga)
 tcga_dt[, Gene := rownames(tcga)]
 
-percentiles <- fread(
-    "tcga-expression-percentiles.tsv",
+percentiles = fread(
+    "percentiles-tcga.tsv",
     header = TRUE,
     sep = "\t"
 )
@@ -71,7 +71,7 @@ gg <- (
     )
 )
 ggsave(
-    "tcga-percentile-col.png",
+    "tcga-percentile-col.pdf",
     height = 12,
     width = 40,
     units = "cm",
@@ -102,7 +102,7 @@ gg <- (
     )
 )
 ggsave(
-    "tcga-percentile-point.png",
+    "tcga-percentile-point.pdf",
     height = 12,
     width = 40,
     units = "cm",
@@ -138,7 +138,7 @@ gg <- (
     )
 )
 ggsave(
-    "tcga-RSEM.png",
+    "tcga-RSEM.pdf",
     height = 12,
     width = 100,
     units = "cm",
