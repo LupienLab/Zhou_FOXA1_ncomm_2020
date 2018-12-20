@@ -63,7 +63,7 @@ gg_essentiality = (
     )
 )
 ggsave(
-    filename = "essentiality-prostate.png",
+    filename = "essentiality-prostate.pdf",
     plot = gg_essentiality,
     height = 12,
     width = 20,
@@ -75,7 +75,8 @@ gg_all = (
     ggplot()
     + geom_boxplot(
         data = rnai,
-        mapping = aes(x = Line, y = Score, fill = Tissue)
+        mapping = aes(x = Line, y = Score, fill = Tissue),
+        outlier.shape = NA
     )
     + geom_point(
         data = foxa1,
@@ -100,10 +101,10 @@ gg_all = (
     )
 )
 ggsave(
-    filename = "essentiality-all.png",
+    filename = "essentiality-all.pdf",
     plot = gg_all,
-    height = 30,
-    width = 30,
+    height = 50,
+    width = 100,
     units = "cm"
 )
 
@@ -132,7 +133,7 @@ gg_foxa1 = (
     )
 )
 ggsave(
-    filename = "essentiality-foxa1.png",
+    filename = "essentiality-foxa1.pdf",
     plot = gg_foxa1,
     height = 20,
     width = 20,

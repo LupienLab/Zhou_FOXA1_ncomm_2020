@@ -1,8 +1,8 @@
 rule all:
     input:
-        "essentiality-all-crispr.png",
-        "essentiality-all-rnai.png",
-        "essentiality-prostate-all.png",
+        "essentiality-prostate.pdf",
+        "essentiality-foxa1.pdf",
+        "essentiality-all.pdf",
         "essentiality-combinations.tsv"
 
 rule preprocess:
@@ -20,9 +20,9 @@ rule plots:
         script = "plots.R",
         data = "essentiality-scores.tsv"
     output:
-        "essentiality-prostate.png",
-        "essentiality-foxa1.png",
-        "essentiality-all.png"
+        "essentiality-prostate.pdf",
+        "essentiality-foxa1.pdf",
+        "essentiality-all.pdf"
     shell:
         "Rscript {input.script}"
 
@@ -32,5 +32,14 @@ rule combinations:
         data = "essentiality-scores.tsv"
     output:
         "essentiality-combinations.tsv"
+    shell:
+        "Rscript {input.script}"
+
+rule foxa1_percentiles:
+    input:
+        script = "foxa1-percentiles.R",
+        data = "essentiality-scores.tsv"
+    output:
+        "percentiles-foxa1.tsv"
     shell:
         "Rscript {input.script}"
