@@ -85,7 +85,7 @@ rnai_table[, Underscore := NULL]
 #   find location of brackets in Gene column
 rnai_table[, Gene := gsub(" \\(\\d+\\)", "", Gene)]
 
-# change the naming on the prostate cancer cell lines for more pleasant viewing
+# map cell names to more visually-friendly names, consistent with other plots
 rnai_table[Line == "22RV1", Line := "22Rv1"]
 rnai_table[Line == "LNCAPCLONEFGC", Line := "LNCaP"]
 rnai_table[Line == "MDAPCA2B", Line := "MDA PCa 2B"]
