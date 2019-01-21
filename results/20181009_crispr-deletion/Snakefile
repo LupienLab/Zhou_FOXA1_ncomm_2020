@@ -1,0 +1,9 @@
+rule plot:
+    input:
+        script = "Transient_CRISPR-mediated-FOXA1expn_LNCaP.R",
+        data = "FOXA1_LNCAP_Cas9_NormToNoGuideControl.tsv",
+        summ = "Summary_NormToNoGuidesdata_LNCaP.tsv"
+    output:
+        "transient_single_double_dels.png"
+    shell:
+        "Rscript {input.script}"
