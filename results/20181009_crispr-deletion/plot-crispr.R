@@ -30,35 +30,35 @@ summary_rel_noguides = fread(
 # t-test for hotspot regions regulating FOXA1 expression by CRISPR/Cas9 deletion
 # (contrasting to Neg #1)
 
-t.test(
+wilcox.test(
     expn_rel_noguides[Sample == "CRE1", Expression],
     expn_rel_noguides[Sample == "Chr14 (-)", Expression]
 )
-t.test(
+wilcox.test(
     expn_rel_noguides[Sample == "CRE2", Expression],
     expn_rel_noguides[Sample == "Chr14 (-)", Expression]
 )
-t.test(
+wilcox.test(
     expn_rel_noguides[Sample == "CRE4", Expression],
     expn_rel_noguides[Sample == "Chr14 (-)", Expression]
 )
-t.test(
+wilcox.test(
     expn_rel_noguides[Sample == "CRE1 + CRE2", Expression],
     expn_rel_noguides[Sample == "Chr14 (-)", Expression]
 )
-t.test(
+wilcox.test(
     expn_rel_noguides[Sample == "CRE1 + CRE4", Expression],
     expn_rel_noguides[Sample == "Chr14 (-)", Expression]
 )
-t.test(
+wilcox.test(
     expn_rel_noguides[Sample == "CRE2 + CRE4", Expression],
     expn_rel_noguides[Sample == "Chr14 (-)", Expression]
 )
-t.test(
+wilcox.test(
     expn_rel_noguides[Sample == "FOXA1 Promoter (+)", Expression],
     expn_rel_noguides[Sample == "Chr14 (-)", Expression]
 )
-t.test(
+wilcox.test(
     expn_rel_noguides[Sample == "AAVS1 (-)", Expression],
     expn_rel_noguides[Sample == "Chr14 (-)", Expression]
 )
