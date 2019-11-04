@@ -1,6 +1,6 @@
 # Summary
 
-Plots and analysis for [Zhou _et al._, _Noncoding mutations target cis-regulatory elements of FOXA1 in prostate cancer_, 2019]().
+Plots and analysis for [Zhou _et al._, _Noncoding mutations target cis-regulatory elements of the FOXA1 plexus in prostate cancer_, 2019]().
 
 Data used for these analyses can be found in `data/`.
 Analyses performed can be found in `results/`.
